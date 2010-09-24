@@ -1,0 +1,6 @@
+*.o
+*.hi
+*.a
+dist/build/autogen
+dist/package.conf.inplace
+dist/setup-config
