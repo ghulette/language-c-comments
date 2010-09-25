@@ -27,9 +27,11 @@ import Control.Exception
 import Control.Monad
 import Data.List
 
--- | 'Preprocessor' encapsulates the abstract interface for invoking C preprocessors
+-- | 'Preprocessor' encapsulates the abstract interface for invoking C 
+-- preprocessors
 class Preprocessor cpp where
-    -- | parse the given command line arguments, and return a pair of parsed and ignored arguments
+    -- | parse the given command line arguments, and return a pair of parsed 
+    -- and ignored arguments
     parseCPPArgs :: cpp -> [String] -> Either String (CppArgs, [String])
     -- | run the preprocessor
     runCPP :: cpp -> CppArgs -> IO ExitCode
@@ -56,12 +58,19 @@ data CppArgs = CppArgs {
 
 -- | Cpp arguments that only specify the input file name.
 cppFile :: FilePath -> CppArgs
-cppFile input_file = CppArgs { cppOptions = [], extraOptions = [], cppTmpDir = Nothing, inputFile = input_file, outputFile = Nothing }
+cppFile input_file = CppArgs { cppOptions = [], 
+                               extraOptions = [], 
+                               cppTmpDir = Nothing, 
+                               inputFile = input_file, 
+                               outputFile = Nothing }
 
 -- | use the given preprocessor arguments without analyzing them
 rawCppArgs :: [String] -> FilePath -> CppArgs
-rawCppArgs opts input_file =
-    CppArgs { inputFile = input_file, cppOptions = [], extraOptions = opts, outputFile = Nothing, cppTmpDir = Nothing }
+rawCppArgs opts input_file = CppArgs { inputFile = input_file, 
+                                       cppOptions = [], 
+                                       extraOptions = opts, 
+                                       outputFile = Nothing, 
+                                       cppTmpDir = Nothing }
 
 -- | add a typed option to the given preprocessor arguments
 addCppOption :: CppArgs -> CppOption -> CppArgs
@@ -73,8 +82,10 @@ addExtraOption :: CppArgs -> String -> CppArgs
 addExtraOption cpp_args extra =
     cpp_args { extraOptions = extra : (extraOptions cpp_args) }
 
--- | run the preprocessor and return an 'InputStream' if preprocesssing succeeded
-runPreprocessor :: (Preprocessor cpp) => cpp -> CppArgs -> IO (Either ExitCode InputStream)
+-- | run the preprocessor and return an 'InputStream' if preprocesssing 
+-- succeeded
+runPreprocessor :: (Preprocessor cpp) => 
+                   cpp -> CppArgs -> IO (Either ExitCode InputStream)
 runPreprocessor cpp cpp_args = do
     bracket
         getActualOutFile
@@ -84,13 +95,18 @@ runPreprocessor cpp cpp_args = do
         invokeCpp
     where
     getActualOutFile :: IO FilePath
-    getActualOutFile = maybe (mkOutputFile (cppTmpDir cpp_args) (inputFile cpp_args)) return (outputFile cpp_args)
+    getActualOutFile = 
+      maybe (mkOutputFile (cppTmpDir cpp_args) (inputFile cpp_args)) 
+            return 
+            (outputFile cpp_args)
     invokeCpp actual_out_file = do
-        exit_code <- runCPP cpp (cpp_args { outputFile = Just actual_out_file})
+        let args = cpp_args { outputFile = Just actual_out_file}
+        exit_code <- runCPP cpp args
         case exit_code of
             ExitSuccess   -> liftM Right (readInputStream actual_out_file)
             ExitFailure _ -> return $ Left exit_code
-    removeTmpOutFile out_file = maybe (removeFile out_file) (\_ -> return ()) (outputFile cpp_args)
+    removeTmpOutFile out_file = 
+      maybe (removeFile out_file) (\_ -> return ()) (outputFile cpp_args)
 
 -- | create an output file, given  @Maybe tmpdir@ and @inputfile@
 mkOutputFile :: Maybe FilePath -> FilePath -> IO FilePath
@@ -103,10 +119,12 @@ mkOutputFile tmp_dir_opt input_file =
 
 -- | compute output file name from input file name
 getOutputFileName :: FilePath -> FilePath
-getOutputFileName fp | hasExtension fp = replaceExtension filename preprocessedExt
-                     | otherwise       = addExtension filename preprocessedExt
-    where
-    filename = takeFileName fp
+getOutputFileName fp =
+  if hasExtension fp 
+  then replaceExtension filename preprocessedExt
+  else addExtension filename preprocessedExt
+  where 
+  filename = takeFileName fp
 
 -- | create a temporary file
 mkTmpFile :: FilePath -> FilePath -> IO FilePath
