@@ -1,6 +1,7 @@
 {
-module Comments (extractComments) where
-
+module Language.C.System.Comments (
+  extractComments
+) where
 import Control.Arrow
 }
 
@@ -14,7 +15,7 @@ $hexdigit = [0-9a-fA-F]
 $instr    = \0-\255 # [ \\ \" \n \r ] -- valid character in a string literal
 @string   = \"($instr|@charesc)*\"
 
--- Regexp for C comments, thanks to http://ostermiller.org/findcomment.html
+-- Regexp for C comments, credit to http://ostermiller.org/findcomment.html
 @comment  = \/\*([^\*]|[\r\n]|(\*+([^\*\/]|[\r\n])))*\*+\/|(\/\/.*)
 
 tokens :-
