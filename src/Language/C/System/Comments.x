@@ -1,7 +1,9 @@
 {
 module Language.C.System.Comments 
-( extractComments
-, comments
+( comments
+, Comment
+, commentPosition
+, commentText
 ) 
 where
 import Control.Arrow
@@ -33,17 +35,32 @@ tokens :-
 convertPosn :: FilePath -> AlexPosn -> Position
 convertPosn file (AlexPn offset line col) = Position file line col
 
--- | Takes a C file and separates it into the code stripped of comments, and 
--- a list of the comments.
+-- | Takes a string containing C code and separates it into the code stripped
+-- of comments, and a list of the comments.
 extractComments :: String -> (String,[(AlexPosn,String)])
 extractComments = 
   alexScanTokens >>> unzip >>> (concat *** filter (not . null . snd))
 
-comments :: FilePath -> IO [(Position,String)]
+data Comment = Comment 
+  { commentPosition :: Position
+  , commentText :: String
+  } deriving (Eq,Show)
+
+-- Note that CPP strips comments *after* joining lines marked with \, which 
+-- can cause problems with one-line comments.  This is probably a little-used 
+-- "feature" in C files, but I should fix it anyway.
+commentsForFile :: FilePath -> String -> [Comment]
+commentsForFile file code = 
+  let 
+    convertPosnsIn = map (first (convertPosn file))
+    makeComment = \(p,t) -> Comment p t
+    (_,cmnts) = extractComments code
+  in
+    map makeComment (convertPosnsIn cmnts)
+
+comments :: FilePath -> IO [Comment]
 comments file = do
   code <- readFile file
-  let (_,cmnts) = extractComments code
-  return $ convertPosnsIn cmnts
-  where
-    convertPosnsIn = map (first (convertPosn file))
+  return $ commentsForFile file code
+
 }
