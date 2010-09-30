@@ -1,11 +1,15 @@
 {
-module Language.C.System.Comments (
-  extractComments
-) where
+module Language.C.System.Comments 
+( extractComments
+, comments
+) 
+where
 import Control.Arrow
+import Language.C.Data.Position
+import System.IO
 }
 
-%wrapper "basic"
+%wrapper "posn"
 
 -- We have to recognize strings, so we don't grab comments inside them.
 -- Just copypasted from src/Language/C/Parser/Lexer.x
@@ -19,16 +23,27 @@ $instr    = \0-\255 # [ \\ \" \n \r ] -- valid character in a string literal
 @comment  = \/\*([^\*]|[\r\n]|(\*+([^\*\/]|[\r\n])))*\*+\/|(\/\/.*)
 
 tokens :-
-  @string  { \s -> (s,"") }
-  @comment { \s -> (" ",s) }
-  .|\n     { \s -> (s,"") }
+  @string  { \pos s -> (s,(pos,"")) }
+  @comment { \pos s -> (" ",(pos,s)) }
+  .|\n     { \pos s -> (s,(pos,"")) }
 
 {
 
+-- | Convert an Alex position to a C Language position
+convertPosn :: FilePath -> AlexPosn -> Position
+convertPosn file (AlexPn offset line col) = Position file line col
+
 -- | Takes a C file and separates it into the code stripped of comments, and 
 -- a list of the comments.
-extractComments :: String -> (String,[String])
+extractComments :: String -> (String,[(AlexPosn,String)])
 extractComments = 
-  alexScanTokens >>> unzip >>> (concat *** filter (not . null))
+  alexScanTokens >>> unzip >>> (concat *** filter (not . null . snd))
 
+comments :: FilePath -> IO [(Position,String)]
+comments file = do
+  code <- readFile file
+  let (_,cmnts) = extractComments code
+  return $ convertPosnsIn cmnts
+  where
+    convertPosnsIn = map (first (convertPosn file))
 }

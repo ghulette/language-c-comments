@@ -74,6 +74,7 @@ Library
                       -- system
                       Language.C.System.Preprocess
                       Language.C.System.GCC
+                      Language.C.System.Comments
                       -- analysis [experimental]
                       Language.C.Analysis
                       Language.C.Analysis.SemError
@@ -94,5 +95,4 @@ Library
                       Language.C.Parser.ParserMonad
                       Language.C.Parser.Tokens
                       Language.C.Parser.Parser
-                      Language.C.System.Comments
 

@@ -11,7 +11,7 @@
 --
 -- Compile time input abstraction for the parser.
 -- Supports either ByteString or String.
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 module Language.C.Data.InputStream (
     InputStream, readInputStream,inputStreamToString,inputStreamFromString,
     takeChar,inputStreamEmpty,takeChars,
@@ -49,7 +49,7 @@ inputStreamEmpty :: InputStream -> Bool
 takeChars :: Int -> InputStream -> [Char]
 {-# INLINE takeChars #-}
 
--- | @countLines@ returns the number of text lines  in the
+-- | @countLines@ returns the number of text lines in the
 -- given 'InputStream'
 countLines :: InputStream -> Int
 
