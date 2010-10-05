@@ -9,6 +9,7 @@ where
 import Control.Arrow
 import Language.C.Data.Position
 import System.IO
+import Language.C.System.LineParser
 }
 
 %wrapper "posn"
@@ -61,6 +62,7 @@ commentsForFile file code =
 comments :: FilePath -> IO [Comment]
 comments file = do
   code <- readFile file
-  return $ commentsForFile file code
+  let ls = parseLines code
+  return $ commentsForFile file (unlines ls)
 
 }

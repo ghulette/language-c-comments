@@ -1,4 +1,4 @@
-module LineParser (parseLines) where
+module Language.C.System.LineParser (parseLines) where
 import Data.List
 
 isWhitespace :: Char -> Bool

@@ -95,4 +95,5 @@ Library
                       Language.C.Parser.ParserMonad
                       Language.C.Parser.Tokens
                       Language.C.Parser.Parser
+                      Language.C.System.LineParser
 
