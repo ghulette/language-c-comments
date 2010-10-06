@@ -9,7 +9,7 @@ Maintainer:     ghulette@gmail.com
 Stability:      experimental
 Homepage:       http://github.com/ghulette/language-c-comments
 Bug-reports:    http://github.com/ghulette/language-c-comments/issues
-Synopsis:       Parsing comments from C code
+Synopsis:       Extracting comments from C code
 Description:    Language C Comments is a Haskell library for extracting 
                 comments from C code.  It will parse both single- and 
                 multi-line comments, and correctly handles split lines.
