@@ -1,4 +1,5 @@
-module Language.C.System.LineParser (parseLines) where
+module Language.C.Comments.LineParser (parseLines) where
+
 import Data.List
 
 isWhitespace :: Char -> Bool
@@ -33,9 +34,3 @@ joinBrokenLines (line1:line2:rest) =
 
 parseLines :: String -> [String]
 parseLines = joinBrokenLines . lines
-
--- main :: IO ()
--- main = do
---   [file] <- getArgs
---   fixed <- fmap parseLines (readFile file)
---   mapM_ putStrLn fixed
