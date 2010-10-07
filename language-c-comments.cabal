@@ -19,7 +19,7 @@ Extra-Source-Files: examples/Main.hs
 Data-Files: LICENSE, README
 
 Library
-  Build-Depends:   base >= 4,array,language-c >= 0.3.2
+  Build-Depends:   base >= 4 && < 5,array,language-c >= 0.3.2
   Build-Tools:     alex
   Hs-Source-Dirs:  src
   Exposed-Modules: Language.C.Comments
