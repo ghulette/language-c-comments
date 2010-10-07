@@ -1,35 +1,42 @@
 module Language.C.Comments
-( comments
-, Comment
-, commentPosition
-, commentText
-) 
-where
+  ( Comment
+  , commentPosition
+  , commentText
+  , comments
+  , commentsFromString
+  ) where
   
 import Control.Arrow
+import Data.Maybe (maybeToList)
 import Language.C.Comments.Lexer
-import Language.C.Comments.LineParser
+import Language.C.Comments.LineParser (parseLines)
 import Language.C.Data.Position
-import System.IO
 
 convertPosn :: FilePath -> AlexPosn -> Position
 convertPosn file (AlexPn offset line col) = Position file line col
 
-extractComments :: String -> (String,[(AlexPosn,String)])
-extractComments = 
-  alexScanTokens >>> unzip >>> (concat *** filter (not . null . snd))
+parseComments :: String -> (String,[(AlexPosn,String)])
+parseComments = 
+  alexScanTokens >>> unzip >>> (concat *** concatMap maybeToList)
 
+-- | Comment positions use Language.C.Data.Position for compatibility with
+-- Language.C.
 data Comment = Comment 
   { commentPosition :: Position
   , commentText :: String
   } deriving (Eq,Show)
 
-commentsForFile :: FilePath -> String -> [Comment]
-commentsForFile file code = 
+-- | Comments are ordered by position within files.
+instance Ord Comment where
+  compare x y = compare (commentPosition x) (commentPosition y)
+
+commentsInFile :: FilePath -> String -> [Comment]
+commentsInFile file code = 
   let 
     convertPosnsIn = map (first (convertPosn file))
     makeComment = \(p,t) -> Comment p t
-    (_,cmnts) = extractComments code
+    joinBrokenLines = unlines . parseLines
+    (_,cmnts) = parseComments (joinBrokenLines code)
   in
     map makeComment (convertPosnsIn cmnts)
 
@@ -37,5 +44,9 @@ commentsForFile file code =
 comments :: FilePath -> IO [Comment]
 comments file = do
   code <- readFile file
-  let ls = parseLines code -- parseLines joins broken lines
-  return $ commentsForFile file (unlines ls)
+  return $ commentsInFile file code
+
+-- | Extract comments from a string.  A comment's position contains a
+-- filename; this method uses the empty string in its place.
+commentsFromString :: String -> [Comment]
+commentsFromString = commentsInFile ""

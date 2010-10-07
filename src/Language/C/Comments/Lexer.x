@@ -1,5 +1,6 @@
 {
 module Language.C.Comments.Lexer where
+
 }
 
 %wrapper "posn"
@@ -16,6 +17,6 @@ $instr    = \0-\255 # [ \\ \" \n \r ] -- valid character in a string literal
 @comment  = \/\*([^\*]|[\r\n]|(\*+([^\*\/]|[\r\n])))*\*+\/|(\/\/.*)
 
 tokens :-
-  @string  { \pos s -> (s,(pos,"")) }
-  @comment { \pos s -> (" ",(pos,s)) }
-  .|\n     { \pos s -> (s,(pos,"")) }
+  @string  { \pos s -> (s  , Nothing) }
+  @comment { \pos s -> (" ", Just (pos,s)) }
+  .|\n     { \pos s -> (s  , Nothing) }

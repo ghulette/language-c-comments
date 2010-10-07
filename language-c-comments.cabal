@@ -15,10 +15,10 @@ Description:    Language C Comments is a Haskell library for extracting
                 multi-line comments, and correctly handles split lines.
 Category:       Language
 
-Extra-Source-Files: README
+Extra-Source-Files: README LICENSE
 
 Library
-  Build-Depends:   base >= 4, array, language-c >= 0.3.2
+  Build-Depends:   base >= 4,array,language-c >= 0.3.2
   Build-Tools:     alex
   Hs-Source-Dirs:  src
   Exposed-Modules: Language.C.Comments
