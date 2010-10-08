@@ -15,7 +15,7 @@ Description:    Language C Comments is a Haskell library for extracting
                 multi-line comments, and correctly handles split lines.
 Category:       Language
 
-Extra-Source-Files: examples/Main.hs
+Extra-Source-Files: examples/Main.hs, examples/BrokenLine.c
 Data-Files: LICENSE, README
 
 Library
