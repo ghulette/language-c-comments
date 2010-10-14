@@ -13,7 +13,8 @@ printComment c = do
       file = posFile posn
       row  = posRow posn
       col  = posColumn posn
-  printf "(%d:%d) %s\n" row col file
+      fmt  = show $ commentFormat c
+  printf "(%d:%d) %s %s\n" row col file fmt
   putStrLn $ commentText c
   putStrLn "---"
 

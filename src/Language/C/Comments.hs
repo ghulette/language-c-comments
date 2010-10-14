@@ -2,6 +2,7 @@ module Language.C.Comments
   ( Comment
   , commentPosition
   , commentText
+  , commentFormat
   , comments
   , commentsFromString
   ) where
@@ -15,7 +16,7 @@ import Language.C.Data.Position
 convertPosn :: FilePath -> AlexPosn -> Position
 convertPosn file (AlexPn offset line col) = Position file line col
 
-parseComments :: String -> (String,[(AlexPosn,String)])
+parseComments :: String -> (String,[(AlexPosn,String,CommentFormat)])
 parseComments = 
   alexScanTokens >>> unzip >>> (concat *** concatMap maybeToList)
 
@@ -24,6 +25,8 @@ parseComments =
 data Comment = Comment 
   { commentPosition :: Position
   , commentText :: String
+  , commentFormat :: CommentFormat
+--  , commentRawText :: String
   } deriving (Eq,Show)
 
 -- | Comments are ordered by position within files.
@@ -32,13 +35,13 @@ instance Ord Comment where
 
 commentsInFile :: FilePath -> String -> [Comment]
 commentsInFile file code = 
-  let 
-    convertPosnsIn = map (first (convertPosn file))
-    makeComment = \(p,t) -> Comment p t
+  let
+    convertPos (p,txt,fmt) = (convertPosn file p,txt,fmt)
+    makeComment = \(p,txt,fmt) -> Comment p txt fmt
     joinBrokenLines = unlines . parseLines
     (_,cmnts) = parseComments (joinBrokenLines code)
   in
-    map makeComment (convertPosnsIn cmnts)
+    map makeComment (map convertPos cmnts)
 
 -- | Extract comments from a C file
 comments :: FilePath -> IO [Comment]
