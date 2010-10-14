@@ -2,6 +2,7 @@ module Language.C.Comments
   ( Comment
   , commentPosition
   , commentText
+  , commentRawText
   , commentFormat
   , comments
   , commentsFromString
@@ -24,24 +25,28 @@ parseComments =
 -- Language.C.
 data Comment = Comment 
   { commentPosition :: Position
-  , commentText :: String
+  , commentRawText :: String
   , commentFormat :: CommentFormat
---  , commentRawText :: String
+  , commentText :: String
   } deriving (Eq,Show)
 
 -- | Comments are ordered by position within files.
 instance Ord Comment where
   compare x y = compare (commentPosition x) (commentPosition y)
 
+stripCommentMarks :: CommentFormat -> String -> String
+stripCommentMarks SingleLine = drop 2
+stripCommentMarks MultiLine = reverse . drop 2 . reverse . drop 2
+
+makeComment :: FilePath -> (AlexPosn,String,CommentFormat) -> Comment
+makeComment file (pos,raw,fmt) = Comment pos' raw fmt txt
+  where pos' = convertPosn file pos
+        txt = stripCommentMarks fmt raw
+
 commentsInFile :: FilePath -> String -> [Comment]
-commentsInFile file code = 
-  let
-    convertPos (p,txt,fmt) = (convertPosn file p,txt,fmt)
-    makeComment = \(p,txt,fmt) -> Comment p txt fmt
-    joinBrokenLines = unlines . parseLines
-    (_,cmnts) = parseComments (joinBrokenLines code)
-  in
-    map makeComment (map convertPos cmnts)
+commentsInFile file code = map (makeComment file) cmnts
+  where joinBrokenLines = unlines . parseLines
+        (_,cmnts) = parseComments (joinBrokenLines code)
 
 -- | Extract comments from a C file
 comments :: FilePath -> IO [Comment]

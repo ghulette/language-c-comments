@@ -1,5 +1,5 @@
 -- Simple example reads a C file, extracts comments, and prints them.
--- Build with something like:
+-- Build with something like this:
 -- ghc -package-conf ../dist/package.conf.inplace --make Main.hs
 
 import Language.C
@@ -16,6 +16,7 @@ printComment c = do
       fmt  = show $ commentFormat c
   printf "(%d:%d) %s %s\n" row col file fmt
   putStrLn $ commentText c
+  putStrLn $ commentRawText c
   putStrLn "---"
 
 main :: IO ()
