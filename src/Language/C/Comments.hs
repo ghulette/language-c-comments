@@ -1,8 +1,9 @@
 module Language.C.Comments
   ( Comment
+  , CommentFormat(SingleLine,MultiLine)
   , commentPosition
   , commentText
-  , commentRawText
+  , commentTextWithoutMarks
   , commentFormat
   , comments
   , commentsFromString
@@ -25,10 +26,14 @@ parseComments =
 -- Language.C.
 data Comment = Comment 
   { commentPosition :: Position
-  , commentRawText :: String
-  , commentFormat :: CommentFormat
   , commentText :: String
+  , commentFormat :: CommentFormat
   } deriving (Eq,Show)
+  
+-- | Get the text of the comment, but with the comment marks removed.
+commentTextWithoutMarks :: Comment -> String
+commentTextWithoutMarks c = stripCommentMarks fmt (commentText c)
+  where fmt = commentFormat c
 
 -- | Comments are ordered by position within files.
 instance Ord Comment where
@@ -39,9 +44,8 @@ stripCommentMarks SingleLine = drop 2
 stripCommentMarks MultiLine = reverse . drop 2 . reverse . drop 2
 
 makeComment :: FilePath -> (AlexPosn,String,CommentFormat) -> Comment
-makeComment file (pos,raw,fmt) = Comment pos' raw fmt txt
+makeComment file (pos,txt,fmt) = Comment pos' txt fmt
   where pos' = convertPosn file pos
-        txt = stripCommentMarks fmt raw
 
 commentsInFile :: FilePath -> String -> [Comment]
 commentsInFile file code = map (makeComment file) cmnts

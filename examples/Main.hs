@@ -16,11 +16,12 @@ printComment c = do
       fmt  = show $ commentFormat c
   printf "(%d:%d) %s %s\n" row col file fmt
   putStrLn $ commentText c
-  putStrLn $ commentRawText c
+  putStrLn $ commentTextWithoutMarks c
   putStrLn "---"
 
 main :: IO ()
 main = do
+  putStrLn $ show SingleLine
   [file] <- getArgs
   cmnts <- comments file
   mapM_ printComment cmnts
