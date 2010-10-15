@@ -1,0 +1,4 @@
+Changes 0.1 - 0.2
+=============================================================================
+  * Added flag indicating comment format (single- or multi-line)
+  * Added commentTextWithoutMarks to strip comment markers

@@ -1,5 +1,5 @@
 Name:           language-c-comments
-Version:        0.1
+Version:        0.2
 Cabal-Version:  >= 1.2.3
 Build-Type:     Simple
 License:        BSD3
@@ -15,7 +15,7 @@ Description:    Language C Comments is a Haskell library for extracting
                 multi-line comments, and correctly handles split lines.
 Category:       Language
 
-Extra-Source-Files: examples/Main.hs, examples/BrokenLine.c
+Extra-Source-Files: examples/Main.hs
 Data-Files: LICENSE, README
 
 Library
