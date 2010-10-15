@@ -24,13 +24,16 @@ parseComments =
 
 -- | Comment positions use Language.C.Data.Position for compatibility with
 -- Language.C.
-data Comment = Comment 
-  { commentPosition :: Position
-  , commentText :: String
-  , commentFormat :: CommentFormat
-  } deriving (Eq,Show)
+data Comment = Comment {
+  -- | The position of the comment within the source file.
+  commentPosition :: Position,
+  -- | The text of a comment (including the comment marks).
+  commentText :: String,
+  -- | The format of a comment (single- or multi-line).
+  commentFormat :: CommentFormat
+} deriving (Eq,Show)
   
--- | Get the text of the comment, but with the comment marks removed.
+-- | The text of a comment, but with the comment marks removed.
 commentTextWithoutMarks :: Comment -> String
 commentTextWithoutMarks c = stripCommentMarks fmt (commentText c)
   where fmt = commentFormat c
@@ -52,7 +55,7 @@ commentsInFile file code = map (makeComment file) cmnts
   where joinBrokenLines = unlines . parseLines
         (_,cmnts) = parseComments (joinBrokenLines code)
 
--- | Extract comments from a C file
+-- | Extract comments from a C file.
 comments :: FilePath -> IO [Comment]
 comments file = do
   code <- readFile file
