@@ -16,7 +16,7 @@ import Language.C.Comments.LineParser (parseLines)
 import Language.C.Data.Position
 
 convertPosn :: FilePath -> AlexPosn -> Position
-convertPosn file (AlexPn offset line col) = Position file line col
+convertPosn file (AlexPn offset line col) = position offset file line col
 
 parseComments :: String -> (String,[(AlexPosn,String,CommentFormat)])
 parseComments = 
