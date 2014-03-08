@@ -1,5 +1,5 @@
 Name:           language-c-comments
-Version:        0.2
+Version:        0.3
 Cabal-Version:  >= 1.6
 Build-Type:     Simple
 License:        BSD3
@@ -10,11 +10,9 @@ Stability:      experimental
 Homepage:       http://github.com/ghulette/language-c-comments
 Bug-reports:    http://github.com/ghulette/language-c-comments/issues
 Synopsis:       Extracting comments from C code
-
 Description:    A library for extracting comments from C code.  It
                 will parse both single- and multi-line comments, and
                 correctly handles split lines.
-
 Category:       Language
 
 Extra-Source-Files: examples/Main.hs
